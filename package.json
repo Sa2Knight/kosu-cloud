@@ -14,7 +14,8 @@
     "next": "10.0.4",
     "normalize.css": "^8.0.1",
     "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "react-dom": "17.0.1",
+    "react-query": "^3.5.6"
   },
   "devDependencies": {
     "@prisma/cli": "^2.13.1",
