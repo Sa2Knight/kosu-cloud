@@ -2,6 +2,10 @@ import { AppProps } from 'next/dist/next-server/lib/router/router'
 import Sidebar from '../components/Sidebar'
 import Head from 'next/head'
 import 'normalize.css'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
+
+const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -18,7 +22,10 @@ export default function App({ Component, pageProps }: AppProps) {
           <Sidebar />
         </aside>
         <main className="router-component-wrapper">
-          <Component {...pageProps} />
+          <QueryClientProvider client={queryClient}>
+            <Component {...pageProps} />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
         </main>
       </div>
 
