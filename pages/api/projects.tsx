@@ -10,6 +10,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'GET':
       const projects = await fetchAllProjects()
-      return res.status(200).json({ projects })
+      return res.status(200).json(projects)
   }
 }
