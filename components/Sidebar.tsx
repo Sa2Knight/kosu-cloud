@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import EditIcon from '@material-ui/icons/Edit'
 import ListAltIcon from '@material-ui/icons/ListAlt'
@@ -5,37 +6,43 @@ import TimerIcon from '@material-ui/icons/Timer'
 import SettingsIcon from '@material-ui/icons/Settings'
 
 export default function Sidebar() {
+  const { asPath } = useRouter()
+
+  const menuListItemClassNames = (href: string) => {
+    return href === asPath ? 'menu-list-item selected' : 'menu-list-item'
+  }
+
   return (
     <div className="sidebar">
       <h1 className="header">工数クラウド</h1>
       <hr className="line" />
       <ul className="menu-list">
-        <li className="menu-list-item selected">
-          <Link href="/">
+        <li className={menuListItemClassNames('/projects')}>
+          <Link href="/projects">
             <a>
               <ListAltIcon />
               <label>プロジェクト一覧</label>
             </a>
           </Link>
         </li>
-        <li className="menu-list-item">
-          <Link href="/">
+        <li className={menuListItemClassNames('/summary')}>
+          <Link href="/summary">
             <a>
               <TimerIcon />
               <label>集計</label>
             </a>
           </Link>
         </li>
-        <li className="menu-list-item">
-          <Link href="/">
+        <li className={menuListItemClassNames('/hours')}>
+          <Link href="/hours">
             <a>
               <EditIcon />
               <label>工数入力</label>
             </a>
           </Link>
         </li>
-        <li className="menu-list-item">
-          <Link href="/">
+        <li className={menuListItemClassNames('/settings')}>
+          <Link href="/settings">
             <a>
               <SettingsIcon />
               <label>設定</label>
@@ -63,8 +70,8 @@ export default function Sidebar() {
             opacity: 0.4;
           }
           .menu-list {
-            padding-left: 20px;
-            padding-right: 20px;
+            padding-left: 10px;
+            padding-right: 10px;
             .menu-list-item {
               display: flex;
               align-items: center;
@@ -78,10 +85,11 @@ export default function Sidebar() {
               }
               a {
                 display: flex;
+                width: 100%;
+                padding-left: 10px;
+                padding-right: 10px;
+                color: #fff;
                 text-decoration: none;
-                &:visited {
-                  color: #fff;
-                }
                 label {
                   margin-left: 5px;
                   cursor: pointer;
