@@ -3,8 +3,9 @@ import React, { useState } from 'react'
 import { Project } from '@prisma/client'
 import { ProjectEditDialog } from '../components/ProjectEditDialog'
 import { makeStyles } from '@material-ui/core'
-import { Paper } from '@material-ui/core'
+import { Paper, Fab } from '@material-ui/core'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add'
 import axios from 'axios'
 
 type updateMutationVariablesType = {
@@ -66,6 +67,11 @@ export default function Projects() {
 
   return (
     <div className="projects">
+      <div className="floating-icon">
+        <Fab color="primary" aria-label="add">
+          <AddIcon />
+        </Fab>
+      </div>
       <TableContainer className={tableClasses.container} component={Paper}>
         <Table stickyHeader>
           <TableHead>
@@ -111,7 +117,13 @@ export default function Projects() {
 
       <style jsx>{`
         .projects {
+          position: relative;
           height: 100%;
+          .floating-icon {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+          }
         }
       `}</style>
     </div>
