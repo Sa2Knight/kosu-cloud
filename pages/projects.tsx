@@ -13,18 +13,28 @@ import {
   TableRow
 } from '@material-ui/core'
 
+// FIXME: BaseTable 的なコンポーネントに切り出す
 const useStyles = makeStyles({
   container: {
     maxHeight: '100%'
+  },
+  row: {
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.04)'
+    }
   }
 })
 
 export default function Projects() {
-  const [isOpenProjectDialog, setIsOpenProjectDialog] = useState(true)
+  const [isOpenProjectDialog, setIsOpenProjectDialog] = useState(false)
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  // FIXME: queryHook は切り出す?
   const { isLoading, data, error } = useQuery<Project[], Error>(
     'projects',
     async () => (await fetch('/api/projects').then(res => res.json())) as Project[]
   )
+
   const tableClasses = useStyles()
 
   if (isLoading) return <div>...loading</div>
@@ -44,7 +54,14 @@ export default function Projects() {
           </TableHead>
           <TableBody>
             {data.map(project => (
-              <TableRow key={project.id}>
+              <TableRow
+                className={tableClasses.row}
+                key={project.id}
+                onClick={() => {
+                  setSelectedProject(project)
+                  setIsOpenProjectDialog(true)
+                }}
+              >
                 <TableCell component="th" scope="row">
                   {project.id}
                 </TableCell>
@@ -56,7 +73,12 @@ export default function Projects() {
         </Table>
       </TableContainer>
 
-      <ProjectDialog open={isOpenProjectDialog} onClose={() => setIsOpenProjectDialog(false)} />
+      <ProjectDialog
+        open={isOpenProjectDialog}
+        onClose={() => setIsOpenProjectDialog(false)}
+        id={selectedProject?.id}
+        name={selectedProject?.name}
+      />
 
       <style jsx>{`
         .projects {

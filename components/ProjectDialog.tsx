@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 type Props = {
   open: boolean
@@ -17,6 +17,13 @@ type Props = {
 export const ProjectDialog: React.FC<Props> = ({ open, onClose, id, name }) => {
   const [newId, setNewId] = useState(id)
   const [newName, setNewName] = useState(name)
+
+  // props が変更されたら状態を再度初期化する
+  // FIXME: Hooks の使い方がこれであってるか確認する
+  useEffect(() => {
+    setNewId(id)
+    setNewName(name)
+  }, [id, name])
 
   const isNew = id && name
 
