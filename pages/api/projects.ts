@@ -11,5 +11,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'GET':
       const projects = await fetchAllProjects()
       return res.status(200).json(projects)
+    default:
+      return res.status(405).json({ message: 'method not allowed' })
   }
 }
