@@ -2,6 +2,7 @@ import { useQueryClient, useMutation, useQuery } from 'react-query'
 import React, { useState } from 'react'
 import { Project } from '@prisma/client'
 import { ProjectEditDialog } from '../components/ProjectEditDialog'
+import { ProjectCreateDialog } from '../components/ProjectCreateDialog'
 import { makeStyles } from '@material-ui/core'
 import { Paper, Fab } from '@material-ui/core'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
@@ -32,6 +33,7 @@ const useStyles = makeStyles({
 })
 
 export default function Projects() {
+  const [isOpenCreateDialog, setIsOpenCreateDialog] = useState<boolean>(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
   // FIXME: queryHook は切り出す?
@@ -67,11 +69,6 @@ export default function Projects() {
 
   return (
     <div className="projects">
-      <div className="floating-icon">
-        <Fab color="primary" aria-label="add">
-          <AddIcon />
-        </Fab>
-      </div>
       <TableContainer className={tableClasses.container} component={Paper}>
         <Table stickyHeader>
           <TableHead>
@@ -99,6 +96,10 @@ export default function Projects() {
         </Table>
       </TableContainer>
 
+      {isOpenCreateDialog ? (
+        <ProjectCreateDialog onCreate={(newId, newName) => {}} onClose={() => setIsOpenCreateDialog(false)} />
+      ) : null}
+
       {selectedProject ? (
         <ProjectEditDialog
           id={selectedProject.id}
@@ -114,6 +115,12 @@ export default function Projects() {
           onClose={() => setSelectedProject(null)}
         />
       ) : null}
+
+      <div className="floating-icon">
+        <Fab color="primary" aria-label="add" onClick={() => setIsOpenCreateDialog(true)}>
+          <AddIcon />
+        </Fab>
+      </div>
 
       <style jsx>{`
         .projects {
