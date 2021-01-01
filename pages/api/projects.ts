@@ -1,8 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient({
-  log: ['query']
-})
+import prisma from '../../prisma/client'
 
 function parseRequestBody(req: NextApiRequest) {
   const id = req.body.id as number
