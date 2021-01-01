@@ -75,9 +75,12 @@ export default function Projects() {
 
       <ProjectDialog
         open={isOpenProjectDialog}
-        onClose={() => setIsOpenProjectDialog(false)}
         id={selectedProject?.id}
         name={selectedProject?.name}
+        onCreate={(newId, newName) => {}}
+        onUpdate={(newId, newName) => {}}
+        onDelete={() => {}}
+        onClose={() => setIsOpenProjectDialog(false)}
       />
 
       <style jsx>{`

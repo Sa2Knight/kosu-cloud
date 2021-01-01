@@ -9,27 +9,31 @@ import React, { useEffect, useState } from 'react'
 
 type Props = {
   open: boolean
-  onClose: () => void
   id?: number
   name?: string
+  onCreate: (id: number, name: string) => void
+  onUpdate: (newId: number, newName: string) => void
+  onDelete: () => void
+  onClose: () => void
 }
 
-export const ProjectDialog: React.FC<Props> = ({ open, onClose, id, name }) => {
-  const [newId, setNewId] = useState(id)
-  const [newName, setNewName] = useState(name)
+export const ProjectDialog: React.FC<Props> = props => {
+  const [newId, setNewId] = useState(props.id || 0)
+  const [newName, setNewName] = useState(props.name || '')
 
   // props が変更されたら状態を再度初期化する
   // FIXME: Hooks の使い方がこれであってるか確認する
   useEffect(() => {
-    setNewId(id)
-    setNewName(name)
-  }, [open, id, name])
+    setNewId(props.id || 0)
+    setNewName(props.name || '')
+  }, [props.open, props.id, props.name])
 
-  const isNew = id && name
+  const isEdit = props.id && props.name
+  const isValid = newId && newName
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth={'sm'}>
-      <DialogTitle>{name || '新規プロジェクト'}</DialogTitle>
+    <Dialog open={props.open} onClose={props.onClose} fullWidth={true} maxWidth={'sm'}>
+      <DialogTitle>{isEdit ? props.name : '新規プロジェクト作成'}</DialogTitle>
       <DialogContent>
         <div className="form">
           <TextField
@@ -51,9 +55,23 @@ export const ProjectDialog: React.FC<Props> = ({ open, onClose, id, name }) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button color="primary">保存</Button>
-        <Button color="secondary">削除</Button>
-        <Button color="default" onClick={onClose}>
+        {isEdit ? (
+          <>
+            <Button color="primary" disabled={!isValid} onClick={() => props.onUpdate(newId, newName)}>
+              更新
+            </Button>
+            <Button color="secondary" onClick={props.onDelete}>
+              削除
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button color="primary" disabled={!isValid} onClick={() => props.onCreate(newId, newName)}>
+              作成
+            </Button>
+          </>
+        )}
+        <Button color="default" onClick={props.onClose}>
           キャンセル
         </Button>
       </DialogActions>
