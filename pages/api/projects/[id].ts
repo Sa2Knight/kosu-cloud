@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+  log: ['query']
+})
 
 function parseIdFromQuery(req: NextApiRequest): number {
   const id = req.query.id
