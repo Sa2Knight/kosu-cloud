@@ -33,6 +33,7 @@ export default function App({ Component, pageProps }: AppProps) {
         .app-wrapper {
           display: flex;
           height: 100vh;
+          min-width: 1080px;
           .sidebar-wrapper {
             width: 260px;
             height: 100%;
