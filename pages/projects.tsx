@@ -2,22 +2,19 @@ import { useQueryClient, useMutation, useQuery } from 'react-query'
 import React, { useState } from 'react'
 import { Project } from '@prisma/client'
 import { ProjectEditDialog } from '../components/ProjectEditDialog'
-import {
-  makeStyles,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
 import axios from 'axios'
 
 type updateMutationVariablesType = {
   id: number
   newId: number
   newName: string
+}
+
+type deleteMutationVariablesType = {
+  id: number
 }
 
 // FIXME: BaseTable 的なコンポーネントに切り出す
@@ -47,7 +44,17 @@ export default function Projects() {
       return axios.patch(`/api/projects/${id}`, { id: newId, name: newName })
     },
     {
-      onSuccess: () => queryClient.invalidateQueries('projects')
+      onSuccess: () => queryClient.invalidateQueries('projects'),
+      onError: e => alert('プロジェクトの更新に失敗しました')
+    }
+  )
+  const deleteMutation = useMutation<Project, Error, deleteMutationVariablesType>(
+    ({ id }) => {
+      return axios.delete(`/api/projects/${id}`)
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries('projects'),
+      onError: e => alert('プロジェクトの更新に失敗しました')
     }
   )
 
@@ -94,7 +101,10 @@ export default function Projects() {
             updateMutation.mutate({ id: selectedProject.id, newId, newName })
             setSelectedProject(null)
           }}
-          onDelete={() => {}}
+          onDelete={() => {
+            deleteMutation.mutate({ id: selectedProject.id })
+            setSelectedProject(null)
+          }}
           onClose={() => setSelectedProject(null)}
         />
       ) : null}

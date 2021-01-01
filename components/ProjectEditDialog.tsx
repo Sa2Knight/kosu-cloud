@@ -3,7 +3,6 @@ import TextField from '@material-ui/core/TextField'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
 import React, { useEffect, useState } from 'react'
 
 type Props = {
@@ -29,7 +28,6 @@ export const ProjectEditDialog: React.FC<Props> = props => {
 
   return (
     <Dialog open onClose={props.onClose} fullWidth={true} maxWidth={'sm'}>
-      <DialogTitle>{props.name}</DialogTitle>
       <DialogContent>
         <div className="form">
           <TextField
