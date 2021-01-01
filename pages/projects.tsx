@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query'
-import React from 'react'
+import React, { useState } from 'react'
 import { Project } from '@prisma/client'
+import { ProjectDialog } from '../components/ProjectDialog'
 import {
   makeStyles,
   Paper,
@@ -19,11 +20,12 @@ const useStyles = makeStyles({
 })
 
 export default function Projects() {
-  const tableClasses = useStyles()
+  const [isOpenProjectDialog, setIsOpenProjectDialog] = useState(true)
   const { isLoading, data, error } = useQuery<Project[], Error>(
     'projects',
     async () => (await fetch('/api/projects').then(res => res.json())) as Project[]
   )
+  const tableClasses = useStyles()
 
   if (isLoading) return <div>...loading</div>
   if (error) return <div>{error.message}</div>
@@ -53,6 +55,8 @@ export default function Projects() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <ProjectDialog open={isOpenProjectDialog} onClose={() => setIsOpenProjectDialog(false)} />
 
       <style jsx>{`
         .projects {
