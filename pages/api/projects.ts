@@ -17,7 +17,7 @@ async function createProject(req: NextApiRequest, res: NextApiResponse) {
   if (!params) return res.status(400).json({ message: 'params invalid' })
 
   const existProject = await prisma.project.findFirst({ where: { id: params.id } })
-  if (existProject) return res.status(400).json({ message: 'project already exists' })
+  if (existProject) return res.status(400).json({ message: 'same id project already exists' })
 
   const createdProject = await prisma.project.create({ data: { id: params.id, name: params.name } })
   return res.status(200).json(createdProject)
