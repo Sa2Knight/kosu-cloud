@@ -23,7 +23,7 @@ export const ProjectDialog: React.FC<Props> = ({ open, onClose, id, name }) => {
   useEffect(() => {
     setNewId(id)
     setNewName(name)
-  }, [id, name])
+  }, [open, id, name])
 
   const isNew = id && name
 
@@ -52,8 +52,10 @@ export const ProjectDialog: React.FC<Props> = ({ open, onClose, id, name }) => {
       </DialogContent>
       <DialogActions>
         <Button color="primary">保存</Button>
-        <Button color="default">キャンセル</Button>
         <Button color="secondary">削除</Button>
+        <Button color="default" onClick={onClose}>
+          キャンセル
+        </Button>
       </DialogActions>
 
       <style jsx>{`
