@@ -7,12 +7,12 @@ import React, { useEffect, useState } from 'react'
 import { DialogTitle } from '@material-ui/core'
 
 type Props = {
-  onCreate: (newId: number, newName: string) => void
+  onCreate: (id: number, name: string) => void
   onClose: () => void
 }
 
 export const ProjectCreateDialog: React.FC<Props> = props => {
-  const [newId, setNewId] = useState(0)
+  const [newId, setNewId] = useState<number | null>(null)
   const [newName, setNewName] = useState('')
   const isValid = newId && newName
 
@@ -27,7 +27,7 @@ export const ProjectCreateDialog: React.FC<Props> = props => {
             label="ID"
             type="number"
             value={newId}
-            onChange={e => setNewId(Number(e.target.value))}
+            onChange={e => setNewId(Number(e.target.value) || null)}
             style={{ width: '120px' }}
           />
           <TextField
@@ -40,12 +40,16 @@ export const ProjectCreateDialog: React.FC<Props> = props => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" disabled={!isValid} onClick={() => props.onCreate(newId, newName)}>
-          作成
-        </Button>
-        <Button color="default" onClick={props.onClose}>
-          キャンセル
-        </Button>
+        <Button
+          children="作成"
+          color="primary"
+          disabled={!isValid}
+          onClick={() => {
+            props.onCreate(newId as number, newName)
+            props.onClose()
+          }}
+        />
+        <Button children="キャンセル" color="default" onClick={props.onClose} />
       </DialogActions>
 
       <style jsx>{`

@@ -9,6 +9,11 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from
 import AddIcon from '@material-ui/icons/Add'
 import axios from 'axios'
 
+type createMutationVariablesType = {
+  id: number
+  name: string
+}
+
 type updateMutationVariablesType = {
   id: number
   newId: number
@@ -41,6 +46,15 @@ export default function Projects() {
   const { isLoading, data, error } = useQuery<Project[], Error>(
     'projects',
     async () => (await fetch('/api/projects').then(res => res.json())) as Project[]
+  )
+  const createMutation = useMutation<Project, Error, createMutationVariablesType>(
+    ({ id, name }) => {
+      return axios.post(`/api/projects`, { id, name })
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries('projects'),
+      onError: e => alert('プロジェクトの作成に失敗しました')
+    }
   )
   const updateMutation = useMutation<Project, Error, updateMutationVariablesType>(
     ({ id, newId, newName }) => {
@@ -97,21 +111,18 @@ export default function Projects() {
       </TableContainer>
 
       {isOpenCreateDialog ? (
-        <ProjectCreateDialog onCreate={(newId, newName) => {}} onClose={() => setIsOpenCreateDialog(false)} />
+        <ProjectCreateDialog
+          onCreate={(id, name) => createMutation.mutate({ id, name })}
+          onClose={() => setIsOpenCreateDialog(false)}
+        />
       ) : null}
 
       {selectedProject ? (
         <ProjectEditDialog
           id={selectedProject.id}
           name={selectedProject.name}
-          onUpdate={(newId, newName) => {
-            updateMutation.mutate({ id: selectedProject.id, newId, newName })
-            setSelectedProject(null)
-          }}
-          onDelete={() => {
-            deleteMutation.mutate({ id: selectedProject.id })
-            setSelectedProject(null)
-          }}
+          onUpdate={(newId, newName) => updateMutation.mutate({ id: selectedProject.id, newId, newName })}
+          onDelete={() => deleteMutation.mutate({ id: selectedProject.id })}
           onClose={() => setSelectedProject(null)}
         />
       ) : null}

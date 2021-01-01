@@ -49,15 +49,24 @@ export const ProjectEditDialog: React.FC<Props> = props => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" disabled={!isValid} onClick={() => props.onUpdate(newId, newName)}>
-          更新
-        </Button>
-        <Button color="secondary" onClick={() => props.onDelete()}>
-          削除
-        </Button>
-        <Button color="default" onClick={props.onClose}>
-          キャンセル
-        </Button>
+        <Button
+          children="更新"
+          color="primary"
+          disabled={!isValid}
+          onClick={() => {
+            props.onUpdate(newId, newName)
+            props.onClose()
+          }}
+        />
+        <Button
+          children="削除"
+          color="secondary"
+          onClick={() => {
+            props.onDelete()
+            props.onClose()
+          }}
+        />
+        <Button children="キャンセル" color="default" onClick={props.onClose} />
       </DialogActions>
 
       <style jsx>{`
