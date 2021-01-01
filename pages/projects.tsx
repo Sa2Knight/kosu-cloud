@@ -1,7 +1,7 @@
-import { useQuery } from 'react-query'
+import { useQueryClient, useMutation, useQuery } from 'react-query'
 import React, { useState } from 'react'
 import { Project } from '@prisma/client'
-import { ProjectDialog } from '../components/ProjectDialog'
+import { ProjectEditDialog } from '../components/ProjectEditDialog'
 import {
   makeStyles,
   Paper,
@@ -12,6 +12,13 @@ import {
   TableHead,
   TableRow
 } from '@material-ui/core'
+import axios from 'axios'
+
+type updateMutationVariablesType = {
+  id: number
+  newId: number
+  newName: string
+}
 
 // FIXME: BaseTable 的なコンポーネントに切り出す
 const useStyles = makeStyles({
@@ -27,12 +34,21 @@ const useStyles = makeStyles({
 })
 
 export default function Projects() {
-  const [isOpenProjectDialog, setIsOpenProjectDialog] = useState(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+
   // FIXME: queryHook は切り出す?
+  const queryClient = useQueryClient()
   const { isLoading, data, error } = useQuery<Project[], Error>(
     'projects',
     async () => (await fetch('/api/projects').then(res => res.json())) as Project[]
+  )
+  const updateMutation = useMutation<Project, Error, updateMutationVariablesType>(
+    ({ id, newId, newName }) => {
+      return axios.patch(`/api/projects/${id}`, { id: newId, name: newName })
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries('projects')
+    }
   )
 
   const tableClasses = useStyles()
@@ -57,10 +73,7 @@ export default function Projects() {
               <TableRow
                 className={tableClasses.row}
                 key={project.id}
-                onClick={() => {
-                  setSelectedProject(project)
-                  setIsOpenProjectDialog(true)
-                }}
+                onClick={() => setSelectedProject(project)}
               >
                 <TableCell component="th" scope="row">
                   {project.id}
@@ -73,15 +86,18 @@ export default function Projects() {
         </Table>
       </TableContainer>
 
-      <ProjectDialog
-        open={isOpenProjectDialog}
-        id={selectedProject?.id}
-        name={selectedProject?.name}
-        onCreate={(newId, newName) => {}}
-        onUpdate={(newId, newName) => {}}
-        onDelete={() => {}}
-        onClose={() => setIsOpenProjectDialog(false)}
-      />
+      {selectedProject ? (
+        <ProjectEditDialog
+          id={selectedProject.id}
+          name={selectedProject.name}
+          onUpdate={(newId, newName) => {
+            updateMutation.mutate({ id: selectedProject.id, newId, newName })
+            setSelectedProject(null)
+          }}
+          onDelete={() => {}}
+          onClose={() => setSelectedProject(null)}
+        />
+      ) : null}
 
       <style jsx>{`
         .projects {
