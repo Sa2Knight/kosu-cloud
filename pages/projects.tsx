@@ -1,5 +1,5 @@
-import { useQueryClient, useMutation, useQuery } from 'react-query'
 import React, { useState } from 'react'
+import { useQueryClient } from 'react-query'
 import { Project } from '@prisma/client'
 import { ProjectEditDialog } from '../components/ProjectEditDialog'
 import { ProjectCreateDialog } from '../components/ProjectCreateDialog'
@@ -7,22 +7,7 @@ import { makeStyles } from '@material-ui/core'
 import { Paper, Fab } from '@material-ui/core'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
-import axios from 'axios'
-
-type createMutationVariablesType = {
-  id: number
-  name: string
-}
-
-type updateMutationVariablesType = {
-  id: number
-  newId: number
-  newName: string
-}
-
-type deleteMutationVariablesType = {
-  id: number
-}
+import useProjects from '../hooks/useProjects'
 
 // FIXME: BaseTable 的なコンポーネントに切り出す
 const useStyles = makeStyles({
@@ -38,42 +23,11 @@ const useStyles = makeStyles({
 })
 
 export default function Projects() {
+  const { query, createMutation, updateMutation, deleteMutation } = useProjects(useQueryClient())
+  const { isLoading, data, error } = query
+
   const [isOpenCreateDialog, setIsOpenCreateDialog] = useState<boolean>(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-
-  // FIXME: queryHook は切り出す?
-  const queryClient = useQueryClient()
-  const { isLoading, data, error } = useQuery<Project[], Error>(
-    'projects',
-    async () => (await fetch('/api/projects').then(res => res.json())) as Project[]
-  )
-  const createMutation = useMutation<Project, Error, createMutationVariablesType>(
-    ({ id, name }) => {
-      return axios.post(`/api/projects`, { id, name })
-    },
-    {
-      onSuccess: () => queryClient.invalidateQueries('projects'),
-      onError: e => alert('プロジェクトの作成に失敗しました')
-    }
-  )
-  const updateMutation = useMutation<Project, Error, updateMutationVariablesType>(
-    ({ id, newId, newName }) => {
-      return axios.patch(`/api/projects/${id}`, { id: newId, name: newName })
-    },
-    {
-      onSuccess: () => queryClient.invalidateQueries('projects'),
-      onError: e => alert('プロジェクトの更新に失敗しました')
-    }
-  )
-  const deleteMutation = useMutation<Project, Error, deleteMutationVariablesType>(
-    ({ id }) => {
-      return axios.delete(`/api/projects/${id}`)
-    },
-    {
-      onSuccess: () => queryClient.invalidateQueries('projects'),
-      onError: e => alert('プロジェクトの更新に失敗しました')
-    }
-  )
 
   const tableClasses = useStyles()
 
