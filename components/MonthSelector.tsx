@@ -12,9 +12,13 @@ export const MonthSelector: React.FC<Prop> = props => {
 
   return (
     <div className="month-selector">
-      <div className="button">{'<<'}</div>
+      <div className="button" onClick={props.onClickPrev}>
+        {'<<'}
+      </div>
       <div className="year-month">{props.date.format('YYYY/MM')}</div>
-      <div className="button">{'>>'}</div>
+      <div className="button" onClick={props.onClickNext}>
+        {'>>'}
+      </div>
 
       <style jsx>{`
         .month-selector {

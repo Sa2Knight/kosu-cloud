@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import MonthSelector from '../components/MonthSelector'
 import useUsers from '../hooks/useUsers'
 import { useQueryClient } from 'react-query'
@@ -26,6 +26,7 @@ export default function Works() {
   const usersQuery = useUsers(queryClient).query
   const worksQuery = useWorks(queryClient).query
   const tableClasses = useStyles()
+  const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs())
   const [currentUserId, setCurrentUserId] = useState<number | null>(null) // FIXME: 美味いこと状態の依存関係作れないかな
 
   const users = usersQuery.data
@@ -39,7 +40,12 @@ export default function Works() {
   return (
     <div className="works">
       <div className="header">
-        <MonthSelector date={dayjs()} fontSize="1.25em" onClickNext={() => {}} onClickPrev={() => {}} />
+        <MonthSelector
+          date={currentDate}
+          fontSize="1.25em"
+          onClickNext={() => setCurrentDate(currentDate.add(1, 'month'))}
+          onClickPrev={() => setCurrentDate(currentDate.add(-1, 'month'))}
+        />
         <Select value={currentUserId} onChange={e => setCurrentUserId(Number(e.target.value))}>
           {users?.map(user => (
             <MenuItem value={user.id}>{user.name}</MenuItem>
