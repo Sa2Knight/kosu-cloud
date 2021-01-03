@@ -26,6 +26,23 @@ async function getWorks(req: NextApiRequest, res: NextApiResponse) {
         gte: dateFrom,
         lte: dateTo
       }
+    },
+    select: {
+      id: true,
+      date: true,
+      hour: true,
+      user: {
+        select: {
+          id: true,
+          name: true
+        }
+      },
+      project: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
     }
   })
   return res.status(200).json(works)
