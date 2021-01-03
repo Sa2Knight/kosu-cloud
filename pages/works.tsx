@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import MonthSelector from '../components/MonthSelector'
 import useUsers from '../hooks/useUsers'
@@ -23,19 +23,20 @@ const useStyles = makeStyles({
 
 export default function Works() {
   const queryClient = useQueryClient()
-  const usersQuery = useUsers(queryClient).query
-  const worksQuery = useWorks(queryClient).query
-  const tableClasses = useStyles()
   const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs())
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null) // FIXME: 美味いこと状態の依存関係作れないかな
+  const [currentUserId, setCurrentUserId] = useState<number>(-1) // FIXME: 美味いこと状態の依存関係作れないかな
+  const usersQuery = useUsers(queryClient).query
+  const worksQuery = useWorks(currentUserId, currentDate).query
+  const tableClasses = useStyles()
 
   const users = usersQuery.data
   const works = worksQuery.data
 
   if (usersQuery.isError || worksQuery.isError) return <div>...Error</div>
+  if (usersQuery.isLoading || worksQuery.isLoading) return <div>...Loading</div>
   if (!users || !works) return <div>...Loading</div>
 
-  if (currentUserId === null) setCurrentUserId(users[0].id)
+  if (currentUserId === -1) setCurrentUserId(users[0].id)
 
   return (
     <div className="works">
@@ -48,7 +49,9 @@ export default function Works() {
         />
         <Select value={currentUserId} onChange={e => setCurrentUserId(Number(e.target.value))}>
           {users?.map(user => (
-            <MenuItem value={user.id}>{user.name}</MenuItem>
+            <MenuItem key={user.id} value={user.id}>
+              {user.name}
+            </MenuItem>
           ))}
         </Select>
       </div>
@@ -68,7 +71,7 @@ export default function Works() {
               {works.map(work => (
                 <TableRow className={tableClasses.row} key={work.id} onClick={() => {}}>
                   <TableCell component="th" scope="row">
-                    {dayjs(work.date).format('YYYY/MM')}
+                    {dayjs(work.date).format('YYYY/MM/DD')}
                   </TableCell>
                   <TableCell>{work.project.name}</TableCell>
                   <TableCell>{work.user.name}</TableCell>
