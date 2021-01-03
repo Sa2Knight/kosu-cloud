@@ -33,8 +33,8 @@ export default function Sidebar() {
             </a>
           </Link>
         </li>
-        <li className={menuListItemClassNames('/hours')}>
-          <Link href="/hours">
+        <li className={menuListItemClassNames('/works')}>
+          <Link href="/works">
             <a>
               <EditIcon />
               <label>工数入力</label>
