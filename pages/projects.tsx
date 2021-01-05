@@ -3,24 +3,10 @@ import { useQueryClient } from 'react-query'
 import { Project } from '@prisma/client'
 import { ProjectEditDialog } from '../components/ProjectEditDialog'
 import { ProjectCreateDialog } from '../components/ProjectCreateDialog'
-import { makeStyles } from '@material-ui/core'
-import { Paper, Fab } from '@material-ui/core'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
+import { Fab } from '@material-ui/core'
+import BaseTable from '../components/BaseTable'
 import AddIcon from '@material-ui/icons/Add'
 import useProjects from '../hooks/useProjects'
-
-// FIXME: BaseTable 的なコンポーネントに切り出す
-const useStyles = makeStyles({
-  container: {
-    maxHeight: '100%'
-  },
-  row: {
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: 'rgba(0, 0, 0, 0.04)'
-    }
-  }
-})
 
 export default function Projects() {
   const { query, createMutation, updateMutation, deleteMutation } = useProjects(useQueryClient())
@@ -29,40 +15,18 @@ export default function Projects() {
   const [isOpenCreateDialog, setIsOpenCreateDialog] = useState<boolean>(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
-  const tableClasses = useStyles()
-
   if (isLoading) return <div>...loading</div>
   if (error) return <div>{error.message}</div>
   if (!data) return <div>...failed</div>
 
   return (
     <div className="projects">
-      <TableContainer className={tableClasses.container} component={Paper}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>プロジェクト名</TableCell>
-              <TableCell>累計時間</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map(project => (
-              <TableRow
-                className={tableClasses.row}
-                key={project.id}
-                onClick={() => setSelectedProject(project)}
-              >
-                <TableCell component="th" scope="row">
-                  {project.id}
-                </TableCell>
-                <TableCell>{project.name}</TableCell>
-                <TableCell>0</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <BaseTable
+        key="id"
+        headerValues={['ID', 'プロジェクト名', '累計時間']}
+        bodyValuesList={data.map(project => [project.id, project.name, 0])}
+        onClickRow={row => setSelectedProject(data[row])}
+      />
 
       {isOpenCreateDialog ? (
         <ProjectCreateDialog
