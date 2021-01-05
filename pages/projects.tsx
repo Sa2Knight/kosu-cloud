@@ -22,7 +22,6 @@ export default function Projects() {
   return (
     <div className="projects">
       <BaseTable
-        key="id"
         headerValues={['ID', 'プロジェクト名', '累計時間']}
         bodyValuesList={data.map(project => [project.id, project.name, 0])}
         onClickRow={row => setSelectedProject(data[row])}
