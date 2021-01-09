@@ -6,25 +6,30 @@ import { ProjectCreateDialog } from '../components/ProjectCreateDialog'
 import { Fab } from '@material-ui/core'
 import BaseTable from '../components/BaseTable'
 import AddIcon from '@material-ui/icons/Add'
-import useProjects from '../hooks/useProjects'
+import useProjectFetch from '../hooks/projects/useFetch'
+import useProjectCreate from '../hooks/projects/useCreate'
+import useProjectUpdate from '../hooks/projects/useUpdate'
+import useProjectDelete from '../hooks/projects/useDelete'
 
 export default function Projects() {
-  const { query, createMutation, updateMutation, deleteMutation } = useProjects(useQueryClient())
-  const { isLoading, data, error } = query
+  const query = useProjectFetch()
+  const createMutation = useProjectCreate(useQueryClient())
+  const updateMutation = useProjectUpdate(useQueryClient())
+  const deleteMutation = useProjectDelete(useQueryClient())
 
   const [isOpenCreateDialog, setIsOpenCreateDialog] = useState<boolean>(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
-  if (isLoading) return <div>...loading</div>
-  if (error) return <div>{error.message}</div>
-  if (!data) return <div>...failed</div>
+  if (query.isLoading) return <div>...loading</div>
+  if (query.error) return <div>{query.error.message}</div>
+  if (!query.data) return <div>...failed</div>
 
   return (
     <div className="projects">
       <BaseTable
         headerValues={['ID', 'プロジェクト名', '累計時間']}
-        bodyValuesList={data.map(project => [project.id, project.name, 0])}
-        onClickRow={row => setSelectedProject(data[row])}
+        bodyValuesList={query.data.map(project => [project.id, project.name, 0])}
+        onClickRow={row => setSelectedProject(query.data[row])}
       />
 
       {isOpenCreateDialog ? (
