@@ -6,13 +6,13 @@ import { ProjectCreateDialog } from '../components/ProjectCreateDialog'
 import { Fab } from '@material-ui/core'
 import BaseTable from '../components/BaseTable'
 import AddIcon from '@material-ui/icons/Add'
-import useProjectFetch from '../hooks/projects/useFetch'
+import useProjectsFetch from '../hooks/projects/useFetch'
 import useProjectCreate from '../hooks/projects/useCreate'
 import useProjectUpdate from '../hooks/projects/useUpdate'
 import useProjectDelete from '../hooks/projects/useDelete'
 
 export default function Projects() {
-  const query = useProjectFetch()
+  const query = useProjectsFetch()
   const createMutation = useProjectCreate(useQueryClient())
   const updateMutation = useProjectUpdate(useQueryClient())
   const deleteMutation = useProjectDelete(useQueryClient())
