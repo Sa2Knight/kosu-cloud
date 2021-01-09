@@ -1,19 +1,17 @@
 import React, { useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import MonthSelector from '../components/MonthSelector'
-import useUsers from '../hooks/useUsers'
-import { useQueryClient } from 'react-query'
 import { Select } from '@material-ui/core'
 import { MenuItem } from '@material-ui/core'
-import useWorks from '../hooks/useWorks'
 import BaseTable from '../components/BaseTable'
+import useUsersFetch from '../hooks/users/useFetch'
+import useWorksFetch from '../hooks/works/useFetch'
 
 export default function Works() {
-  const queryClient = useQueryClient()
   const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs())
   const [currentUserId, setCurrentUserId] = useState<number>(-1) // FIXME: 美味いこと状態の依存関係作れないかな
-  const usersQuery = useUsers(queryClient).query
-  const worksQuery = useWorks(currentUserId, currentDate).query
+  const usersQuery = useUsersFetch()
+  const worksQuery = useWorksFetch(currentUserId, currentDate)
 
   const users = usersQuery.data
   const works = worksQuery.data
